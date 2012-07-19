@@ -1,0 +1,13 @@
+# ruby-vips-riapi : ruby-vips implemetation of riapi
+
+riapi (RESTful Image API) is a web service specification for image processing,
+see:
+
+https://github.com/riapi/riapi
+
+This repository is attempting to implement this specification using the libvips
+image processing library, via the ruby-vips binding:
+
+https://github.com/jcupitt/ruby-vips
+
+
