@@ -97,12 +97,19 @@ class Image
         $log.info "block shrink by #{ishrink}" 
         $log.info "residual scale by #{rscale}" 
 
+        a = shrink(ishrink)
+
+
+        # bicubic might need to look back a few scanlines
         # vips has other interpolators, eg. :nohalo ... see the output of 
         # "vips list classes" at the command-line
         #
         # :bicubic is well-known and mostly good enough
 
-        return shrink(ishrink).affinei_resize(:bicubic, rscale)
+        a = a.tile_cache(a.x_size, 1, 10)
+        a = a.affinei_resize(:bicubic, rscale)
+
+        return a
     end
 
     # upsizing is always just nearest-neighbor

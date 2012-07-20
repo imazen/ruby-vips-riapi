@@ -137,9 +137,8 @@ class RIAPI
         $log.info "crop #{down.inspect}" 
         a = a.extract_area down.left, down.top, down.width, down.height
 
-        # the convolution will break sequential access: we need to cache a few
-        # scanlines
-        a = a.tile_cache(a.x_size, 1, 30)
+        # the conv will have to look back a few scanlines
+        a = a.tile_cache(a.x_size, 1, 8)
 
         # the downsize will look a little "soft", apply a gentle sharpen
         a = a.sharp
