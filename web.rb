@@ -18,19 +18,19 @@ end
 get '/:img' do |img|
 	def parse_mode(mode)
 		case text
-		when 'max'     :max
-		when 'pad'     :pad
-		when 'crop'    :crop
-		when 'stretch' :stretch
+		when 'max'     then :max
+		when 'pad'     then :pad
+		when 'crop'    then :crop
+		when 'stretch' then :stretch
 		else raise ArgumentException, "invalid mode: #{mode}"
 		end
 	end
 
 	def parse_scale(scale)
 		case scale
-		when 'down'   :down
-		when 'both'   :both
-		when 'canvas' :canvas
+		when 'down'   then :down
+		when 'both'   then :both
+		when 'canvas' then :canvas
 		else raise ArgumentException, "invalid scale: #{scale}"
 		end
 	end
