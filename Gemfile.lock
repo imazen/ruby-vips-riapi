@@ -1,6 +1,5 @@
-GIT
-  remote: git@github.com:jcupitt/ruby-vips.git
-  revision: 81e52afaddda2852fbd01b9ee53cd51edb662953
+PATH
+  remote: vendor
   specs:
     ruby-vips (0.3.5)
 
