@@ -2,7 +2,7 @@
 
 # driver program for level1.rb
 
-require 'level1'
+require './level1'
 
 input = ARGV[0]
 output = ARGV[1]

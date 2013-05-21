@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'sinatra'
 
-require 'level1/level1'
+require './level1/level1'
 
 $log.level = Logger::WARN
 

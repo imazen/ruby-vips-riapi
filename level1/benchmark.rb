@@ -2,9 +2,11 @@
 
 # quick performance benchmark
 
-require 'level1'
-require 'benchmark'
-require 'fileutils'
+require 'rubygems'
+
+require './level1'
+require './benchmark'
+require './fileutils'
 
 $log.level = Logger::WARN
 

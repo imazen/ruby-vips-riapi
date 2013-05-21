@@ -11,7 +11,8 @@ $log.level = Logger::DEBUG
 
 require 'rubygems'
 require 'vips'
-require 'level1/process'
+
+require './process'
 
 include VIPS
 
