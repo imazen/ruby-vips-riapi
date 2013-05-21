@@ -1,3 +1,4 @@
+require 'benchmark'
 require 'fileutils'
 require 'sinatra'
 
@@ -14,23 +15,65 @@ get '/samples' do
 	images.map { |img| "#{img}\n" } .join
 end
 
+# benchmark process
+get '/benchmark' do
+	images = Dir[File.join(IN_DIR, '*')].sort
+
+	def process(input_path, output_path, size)
+		riapi = RIAPI.new input_path
+		riapi.width  = size
+		riapi.height = size
+		riapi.mode   = :max
+		riapi.process output_path
+	end
+
+
+	# create output directory
+	FileUtils.mkdir_p(OUT_DIR)
+
+	# redirect stdout to a string
+	str_stream = ''
+	def str_stream.write(data)
+		self << data.to_s
+	end
+	old_stdout, $stdout = $stdout, str_stream
+
+	begin
+		# benchmark riapi::process over a number of images and output sizes
+		Benchmark.bm(14) do |x|
+			images.each do |path|
+				(100..700).step(200).each do |size|
+					img = File.basename(path, '.*')
+					out = File.join(OUT_DIR, "#{img}-#{size}.jpg")
+					x.report("#{size} #{img}") { process(path, out, size) }
+				end
+			end .to_s
+		end
+	ensure
+		# restore stdout
+		$stdout = old_stdout
+	end
+
+	str_stream
+end
+
 # perform an image resize
 get '/:img' do |img|
 	def parse_mode(mode)
 		case text
-		when 'max'     :max
-		when 'pad'     :pad
-		when 'crop'    :crop
-		when 'stretch' :stretch
+		when 'max'     then :max
+		when 'pad'     then :pad
+		when 'crop'    then :crop
+		when 'stretch' then :stretch
 		else raise ArgumentException, "invalid mode: #{mode}"
 		end
 	end
 
 	def parse_scale(scale)
 		case scale
-		when 'down'   :down
-		when 'both'   :both
-		when 'canvas' :canvas
+		when 'down'   then :down
+		when 'both'   then :both
+		when 'canvas' then :canvas
 		else raise ArgumentException, "invalid scale: #{scale}"
 		end
 	end
@@ -61,5 +104,5 @@ get '/:img' do |img|
 
 	riapi.process File.join(OUT_DIR, img)
 
-	"width:  #{riapi.width}\nheight: #{riapi.height}\nmode:   #{riapi.mode}\nscale:  #{riapi.scale}"
+	"width:  #{riapi.width}\nheight: #{riapi.height}\nmode:   #{riapi.mode}\nscale:  #{riapi.scale}\n"
 end

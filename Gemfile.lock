@@ -15,5 +15,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  ruby-vips (= 0.3.5)
-  sinatra (= 1.4.2)
+  ruby-vips
+  sinatra
