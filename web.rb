@@ -92,11 +92,11 @@ get '/:img' do |img|
 	# TODO: make sure comparisons are performed in an ordinal,
 	#       culture-invariant, case-insensitive manner
 
-	riapi.width = Integer(params['width']) if params.include? 'width'
 	riapi.width = Integer(params['w'])     if params.include? 'w'
+	riapi.width = Integer(params['width']) if params.include? 'width'
 
-	riapi.height = Integer(params['height']) if params.include? 'height'
 	riapi.height = Integer(params['h'])      if params.include? 'h'
+	riapi.height = Integer(params['height']) if params.include? 'height'
 
 	riapi.mode = parse_mode(params['mode']) if params.include? 'mode'
 
