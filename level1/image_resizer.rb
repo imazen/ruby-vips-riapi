@@ -16,7 +16,7 @@ require './level1/process'
 
 include VIPS
 
-class RIAPI
+class ImageResizer
     attr_reader :width
     attr_reader :height
     attr_reader :mode
@@ -26,7 +26,7 @@ class RIAPI
     SCALES = [:down, :both, :canvas]
 
     def initialize(input, options = {})
-        $log.info "RIAPI init"
+        $log.info "ImageResizer init"
 
         @input = input
 
