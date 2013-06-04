@@ -12,18 +12,14 @@ https://github.com/jcupitt/ruby-vips
 
 ## Usage
 
-foreman start
-
-curl localhost:5000/samples
+> foreman start<br>
+> curl localhost:5000/samples
 
     curiosity.jpg
     jasper.jpg
     siurana.jpg
 
-
-The above result shows means and standard deviations over 5 runs using a 3200x3200 curiousity image, 1600x1200 siurana image, and a 640x480 jasper image.
-
-curl localhost:5000/siurana.jpg?width=100\&height=200
+> curl localhost:5000/siurana.jpg?width=100\&height=200
 
     width:  100
     height: 200
@@ -32,13 +28,9 @@ curl localhost:5000/siurana.jpg?width=100\&height=200
 
 ## Benchmark
 
-The current benchmark runs the main processing routine to scale images of various sizes to 100x100 ... 700x700 pixels. Image sizes are:
+The current benchmark runs the main processing routine to scale images of various sizes to 100x100 ... 700x700 pixels. The table shows mean values and standard deviations over 5 runs.
 
- * curiosity.jpg: 3200x3200
- * siurana.jpg: 1600x1200
- * jasper.jpg: 640x480
-
-ruby benchmark/run.rb
+> ruby benchmark/run.rb
 
      x5            user       system     total      real       
      100 curiosity 0.21(0.03) 1.18(0.23) 1.39(0.23) 1.72(0.31) 
@@ -53,3 +45,9 @@ ruby benchmark/run.rb
      300 jasper    0.02(0.01) 0.31(0.01) 0.33(0.02) 0.44(0.01) 
      500 jasper    0.02(0.01) 0.39(0.03) 0.41(0.04) 0.53(0.02) 
      700 jasper    0.01(0.01) 0.47(0.02) 0.49(0.02) 0.62(0.02) 
+
+Image sizes are:
+
+ * curiosity.jpg: 3200x3200
+ * siurana.jpg: 1600x1200
+ * jasper.jpg: 640x480
