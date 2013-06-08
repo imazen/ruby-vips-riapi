@@ -18,27 +18,27 @@ describe Layout do
 
   context 'basic resizing' do
     it 'handles empty input' do
-      Layout.process_info(info, {}).should eq({})
+      Layout.process(info, {}).should eq({})
     end
 
     it 'handles simple scaling' do
       options = make_opts("w=320;h=240")
       layout  = { :resize => Options::Resize.new(0.5, 0.5) }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
 
     # If width is omited, it will be chosen to match the original aspect ratio.
     it 'handles missing width' do
       options = make_opts("w=160")
       layout  = { :resize => Options::Resize.new(0.25, 0.25) }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
 
     # If height is omited, it will be chosen to match the original aspect ratio.
     it 'handles missing height' do
       options = make_opts("h=120")
       layout  = { :resize => Options::Resize.new(0.25, 0.25) }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
   end
 
@@ -51,25 +51,25 @@ describe Layout do
       it 'handles width-limited downscaling' do
         options.merge! :width => 320, :height => 480
         layout = { :resize => Options::Resize.new(0.5, 0.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles height-limited downscaling' do
         options.merge! :width => 640, :height => 240
         layout = { :resize => Options::Resize.new(0.5, 0.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles width-limited upscaling' do
         options.merge! :width => 1280, :height => 1280
         layout = { :resize => Options::Resize.new(2, 2) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles height-limited upscaling' do
         options.merge! :width => 2000, :height => 960
         layout = { :resize => Options::Resize.new(2, 2) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
     end
 
@@ -81,7 +81,7 @@ describe Layout do
       it 'handles proportioned downscaling' do
         options.merge! :width => 320, :height => 240
         layout = { :resize => Options::Resize.new(0.5, 0.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles width-limited downscaling' do
@@ -90,7 +90,7 @@ describe Layout do
           :bg     => Options::Background.new(0, 40, 320, 320, :white),
           :resize => Options::Resize.new(0.5, 0.5)
         }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles height-limited downscaling' do
@@ -99,7 +99,7 @@ describe Layout do
           :bg     => Options::Background.new(40, 0, 400, 240, :white),
           :resize => Options::Resize.new(0.5, 0.5)
         }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
     end
   end
@@ -111,19 +111,19 @@ describe Layout do
     it 'handles width-limited downscaling' do
       options.merge! :width => 320, :height => 120
       layout = {
-        :crop   => Options::Crop.new(0, 60, 640, 240),
+        :crop   => Options::Crop.new(0, 120, 640, 240),
         :resize => Options::Resize.new(0.5, 0.5)
       }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
 
     it 'handles height-limited downscaling' do
       options.merge! :width => 160, :height => 240
       layout = {
-        :crop   => Options::Crop.new(80, 0, 320, 480),
+        :crop   => Options::Crop.new(160, 0, 320, 480),
         :resize => Options::Resize.new(0.5, 0.5)
       }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
   end
 
@@ -134,13 +134,13 @@ describe Layout do
     it 'handles non-uniform downscaling' do
       options.merge! :width => 160, :height => 240
       layout = { :resize => Options::Resize.new(0.25, 0.5) }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
 
     it 'handles non-uniform upscaling' do
-      options.merge! :width => 960, :height => 720
+      options.merge! :width => 960, :height => 960
       layout = { :resize => Options::Resize.new(1.5, 2) }
-      Layout.process_info(info, options).should eq layout
+      Layout.process(info, options).should eq layout
     end
   end
 
@@ -154,13 +154,13 @@ describe Layout do
       it 'handles upscaling' do
         options.merge! :width => 960, :height => 960
         layout = { }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles mixed scaling' do
         options.merge! :width => 320, :height => 960
         layout = { :resize => Options::Resize.new(0.5, 0.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
     end
 
@@ -172,34 +172,34 @@ describe Layout do
       it 'handles upscaling' do
         options.merge! :width => 960, :height => 960
         layout = { :resize => Options::Resize.new(1.5, 1.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles mixed scaling' do
         options.merge! :width => 320, :height => 960
         layout = { :resize => Options::Resize.new(0.5, 0.5) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
     end
 
     # Enables upscaling of the canvas, but not the image. Above the original
     # image size, padding will be used to reach the requested dimensions.
     context 'canvas' do
-      let(:options) { make_opts("mode=max;scale=both") }
+      let(:options) { make_opts("mode=pad;scale=canvas") }
 
       it 'handles upscaling' do
         options.merge! :width => 960, :height => 960
         layout = { :bg => Options::Background.new(160, 240, 960, 960, :white) }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
 
       it 'handles mixed scaling' do
         options.merge! :width => 320, :height => 960
         layout = {
-          :crop   => Options::Background.new(0, 360, 320, 960, :white),
+          :bg     => Options::Background.new(0, 360, 320, 960, :white),
           :resize => Options::Resize.new(0.5, 0.5)
         }
-        Layout.process_info(info, options).should eq layout
+        Layout.process(info, options).should eq layout
       end
     end
   end
@@ -212,14 +212,14 @@ describe Layout do
       :load   => Options::Load.new(4),
       :resize => Options::Resize.new(0.75, 0.75)
     }
-    Layout.process_info(info, options).should eq layout
+    Layout.process(info, options).should eq layout
   end
 
   # Pad with alpha, if alpha is supported.
   it 'supports alpha' do
     info = Layout::ImageInfo.new(100, 100, false, true)
-    options = make_opts("w=200;h=200")
+    options = make_opts("w=200;h=200;scale=canvas")
     layout = { :bg => Options::Background.new(50, 50, 200, 200, :alpha) }
-    Layout.process_info(info, options).should eq layout
+    Layout.process(info, options).should eq layout
   end
 end
