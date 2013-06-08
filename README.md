@@ -1,6 +1,6 @@
 # ruby-vips-riapi : ruby-vips implemetation of riapi
 
-riapi (RESTful Image API) is a web service specification for image processing,
+RIAPI (RESTful Image API) is a web service specification for image processing,
 see:
 
 https://github.com/riapi/riapi
@@ -12,6 +12,8 @@ https://github.com/jcupitt/ruby-vips
 
 ## Usage
 
+The 'samples' URI lists the images available for resizing.
+
 > foreman start<br>
 > curl localhost:5000/samples
 
@@ -19,12 +21,11 @@ https://github.com/jcupitt/ruby-vips
     jasper.jpg
     siurana.jpg
 
-> curl localhost:5000/siurana.jpg?width=100\&height=200
+Accessing an image with RIAPI parameters resizes the image in accordance to the *level 1* specification and returns the path to the result.
 
-    width:  100
-    height: 200
-    mode:   pad
-    scale:  down
+> curl jasper.jpg?w=1320&h=320&mode=crop&scale=canvas
+
+    out/jasper.jpg
 
 ## Benchmark
 
@@ -51,3 +52,15 @@ Image sizes are:
  * curiosity.jpg: 3200x3200
  * siurana.jpg: 1600x1200
  * jasper.jpg: 640x480
+
+## Test suite
+
+There are two sets of tests: functional tests of the rendering engine and unit tests of the layout engine.
+
+The rendering tests perform a number of operations on 'jasper.jpg' and write the output to 'out'.
+
+> ruby test/render.rb
+
+The unit tests are implemented in RSpec and can be found in the 'spec' directory.
+
+> rspec spec/layout-spec.rb

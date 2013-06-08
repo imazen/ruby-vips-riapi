@@ -4,8 +4,6 @@ require 'sinatra'
 
 require 'level1/image_resizer.rb'
 
-$log.level = Logger::WARN
-
 IN_DIR  = 'samples/images'
 OUT_DIR = 'out'
 
@@ -25,8 +23,9 @@ get '/:img' do |img|
 
   FileUtils.mkdir_p(OUT_DIR)
 
-  resizer = ImageResizer.new(File.join(IN_DIR, img), RIAPI::parse_params(params))
-  resizer.process File.join(OUT_DIR, img)
+  input_path  = File.join(IN_DIR, img)
+  output_path = File.join(OUT_DIR, img)
+  ImageResizer.resize_image(input_path, output_path, RIAPI::parse_params(params))
 
-  "width:  #{resizer.width}\nheight: #{resizer.height}\nmode:   #{resizer.mode}\nscale:  #{resizer.scale}\n"
+  "#{output_path}\n"
 end

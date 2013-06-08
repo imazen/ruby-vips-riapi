@@ -3,6 +3,9 @@ require 'level1/layout'
 require 'rubygems'
 require 'riapi'
 
+# implement level l of the riapi spec, see:
+# https://github.com/riapi/riapi/blob/master/level-1.md
+
 # parse parameter string of the form: a=b;c=d;e=...
 def make_opts(s)
   opts = {}
@@ -111,7 +114,7 @@ describe Layout do
     it 'handles width-limited downscaling' do
       options.merge! :width => 320, :height => 120
       layout = {
-        :crop   => Options::Crop.new(0, 120, 640, 240),
+        :crop   => Options::Crop.new(0, -120, 640, 240),
         :resize => Options::Resize.new(0.5, 0.5)
       }
       Layout.process(info, options).should eq layout
@@ -120,7 +123,7 @@ describe Layout do
     it 'handles height-limited downscaling' do
       options.merge! :width => 160, :height => 240
       layout = {
-        :crop   => Options::Crop.new(160, 0, 320, 480),
+        :crop   => Options::Crop.new(-160, 0, 320, 480),
         :resize => Options::Resize.new(0.5, 0.5)
       }
       Layout.process(info, options).should eq layout

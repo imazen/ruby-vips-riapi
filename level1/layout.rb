@@ -23,43 +23,43 @@ module Layout
     end
   end
 
-  def self.lay_out_image(path, options)
+  def self.lay_out_image(path, params)
     image = Image.new path
     info = ImageInfo.new
     info.width          = image.x_size
     info.height         = image.y_size
     info.shrink_on_load = path.end_with? '.jpg' # ugly
-    info.alpha          = path.end_with? '.png' # ugly
-    process(info, options)
+    info.has_alpha      = path.end_with? '.png' # ugly
+    process(info, params)
   end
 
-  # options are expected to conform to RIAPI
-  def self.process(info, options)
-    if !options.include?(:width) && !options.include?(:height)
+  # params are expected to conform to RIAPI
+  def self.process(info, params)
+    if !params.include?(:width) && !params.include?(:height)
       # when neither width nor height are given, do nothing
       {}
     else
-      options = options.dup
+      params = params.dup
 
       # keep aspect ratio, if width is omited
-      if !options.include?(:width)
-        options[:width] = options[:height] * info.width / info.height
+      if !params.include?(:width)
+        params[:width] = params[:height] * info.width / info.height
       end
 
       # keep aspect ratio, if height is omited
-      if !options.include?(:height)
-        options[:height] = options[:width] * info.height / info.width
+      if !params.include?(:height)
+        params[:height] = params[:width] * info.height / info.width
       end
 
       # initialize sizes
-      wanted_size = Size.new(options[:width], options[:height]) # requested image size
+      wanted_size = Size.new(params[:width], params[:height]) # requested image size
       source_size = Size.new(info.width, info.height)           # original image size
       target_size = Size.new(-1, -1)                            # eventual image size
       canvas_size = Size.new(-1, -1)                            # canvas size
       crop_size   = source_size                                 # size of the cropped image
 
       # process mode
-      case options[:mode]
+      case params[:mode]
       when :max
         target_size = canvas_size = source_size.scale_inside(wanted_size)
       when :pad
@@ -75,7 +75,7 @@ module Layout
       end
 
       # process scale
-      case options[:scale]
+      case params[:scale]
       when :down
         if crop_size.fits_inside? target_size
           target_size = canvas_size = crop_size = source_size
@@ -94,8 +94,8 @@ module Layout
 
       # process cropping
       if crop_size != source_size
-        x = 0.5 * (source_size.width  - crop_size.width)
-        y = 0.5 * (source_size.height - crop_size.height)
+        x = 0.5 * (crop_size.width  - source_size.width)
+        y = 0.5 * (crop_size.height - source_size.height)
         w = crop_size.width
         h = crop_size.height
         layout[:crop] = Options::Crop.new(x, y, w, h)

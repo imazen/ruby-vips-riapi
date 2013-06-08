@@ -4,15 +4,15 @@ require 'vips'
 include VIPS
 
 module Render
-  def self.process(input_path, output_path, options)
-    image = render_open       input_path, options
-    image = render_crop       image, options
-    image = render_resize     image, options
-    image = render_background image, options
+  def self.resize_image(input_path, output_path, options)
+    image = open       input_path, options
+    image = crop       image, options
+    image = resize     image, options
+    image = background image, options
     image.write(output_path)
   end
 
-  def self.render_open(path, options)
+  def self.open(path, options)
     case
     when path.end_with?('.jpg') && options.include?(:load)
         Image.jpeg(path, :shrink_factor => options[:load].shrink_factor, :sequential => true)
@@ -27,7 +27,7 @@ module Render
     end
   end
 
-  def self.render_crop(image, options)
+  def self.crop(image, options)
     if options.include? :crop
       opts = options[:crop]
       image.embed(:white, opts.x, opts.y, opts.w, opts.h)
@@ -36,7 +36,7 @@ module Render
     end
   end
 
-  def self.render_resize(image, options)
+  def self.resize(image, options)
     if options.include? :resize
       opts = options[:resize]
       image.affinei_resize(:bicubic, opts.wfactor, opts.hfactor)
@@ -45,10 +45,10 @@ module Render
     end
   end
 
-  def self.render_background(image, options)
+  def self.background(image, options)
     # aw, shucks, ruby-vips does not support draw_rectangle
     if options.include? :bg
-      opts = options[:crop]
+      opts = options[:bg]
       image.embed(opts.color, opts.x, opts.y, opts.w, opts.h)
     else
       image

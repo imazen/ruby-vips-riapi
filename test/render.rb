@@ -21,15 +21,15 @@ FileUtils.mkdir_p(OUT_DIR)
 
 # test shrinking
 # expected output: a 320x240 version of $source
-run(:render_resize, 'small.jpg', { :resize => Options::Resize.new(0.5, 0.5) })
+run(:resize, 'small.jpg', { :resize => Options::Resize.new(0.5, 0.5) })
 
 # test expansion
 # expected output: 960x720 version of $source
-run(:render_resize, 'large.jpg', { :resize => Options::Resize.new(1.5, 1.5) })
+run(:resize, 'large.jpg', { :resize => Options::Resize.new(1.5, 1.5) })
 
 # test cropping
 # expected output: $source centered on a 480x640 white canvas
-run(:render_crop, 'cropped.jpg', { :crop => Options::Crop.new(-80, 80, 480, 640) })
+run(:crop, 'cropped.jpg', { :crop => Options::Crop.new(-80, 80, 480, 640) })
 
 # test complete render
 # expected output: 320x240 version of $source centered on a 240x320 white canvas
@@ -39,10 +39,10 @@ options = {
   :resize => Options::Resize.new(0.5, 0.5),
   :crop   => Options::Crop.new(-80, 80, 480, 640)
 }
-Render::process(input_path, output_path, options)
+Render::resize_image(input_path, output_path, options)
 
 # test complete render without scaling
 # expected output: a copy of $source
 input_path  = File.join(IN_DIR, $source)
 output_path = File.join(OUT_DIR, 'nop.jpg')
-Render::process(input_path, output_path, {})
+Render::resize_image(input_path, output_path, {})
