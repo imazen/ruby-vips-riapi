@@ -3,7 +3,16 @@ require 'level1/options'
 require 'vips'
 include VIPS
 
+# Performs the actual image resizing.
 module Render
+
+  # Resizes an image, given a layout.
+  #
+  # @param input_path  [String] Relative path to the image file to resize.
+  # @param output_path [String] Relative path to store the resized image.
+  # @param options [Hash<String, Object>] Layout instructions.
+  #
+  # @return [void]
   def self.resize_image(input_path, output_path, options)
     image = open       input_path, options
     image = crop       image, options
@@ -12,6 +21,8 @@ module Render
     image.write(output_path)
   end
 
+  # Opens an image, considering Options.Load instructions.
+  # @return [Image]
   def self.open(path, options)
     case
     when path.end_with?('.jpg') && options.include?(:load)
@@ -27,6 +38,9 @@ module Render
     end
   end
 
+  # Crops an image, considering Options.Crop instructions.
+  # @param image [Image]
+  # @return [Image]
   def self.crop(image, options)
     if options.include? :crop
       opts = options[:crop]
@@ -36,6 +50,9 @@ module Render
     end
   end
 
+  # Resizes an image, considering Options.Resize instructions.
+  # @param image [Image]
+  # @return [Image]
   def self.resize(image, options)
     if options.include? :resize
       opts = options[:resize]
@@ -45,6 +62,9 @@ module Render
     end
   end
 
+  # Adds a background to an image, considering Options.Background instructions.
+  # @param image [Image]
+  # @return [Image]
   def self.background(image, options)
     # aw, shucks, ruby-vips does not support draw_rectangle
     if options.include? :bg

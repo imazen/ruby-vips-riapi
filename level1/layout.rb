@@ -1,16 +1,25 @@
 require 'level1/options'
 
+# Converts RIAPI parameters into rendering instructions, so that the rendering
+# module can be left with minimal logic.
 module Layout
-  # helper class for holding image information
+
+  # Helper class for holding image information.
   ImageInfo = Struct.new(:width, :height, :shrink_on_load, :has_alpha)
 
-  # helper class for working with sizes
+  # Helper class for working with floating-point sizes.
   class Size < Struct.new(:width, :height)
+
+    # Initialize the class with given dimensions. Width and height have to
+    # respond to *to_f*.
     def initialize(width, height)
       self.width  = width.to_f
       self.height = height.to_f
     end
 
+    # Create the largest size that has the same proportions as the current one
+    # and fits inside the size given.
+    # @return [Size]
     def scale_inside(other)
       wratio = other.width  / width
       hratio = other.height / height
@@ -18,11 +27,19 @@ module Layout
       Size.new(width * ratio, height * ratio)
     end
 
+    # Check that current dimensions not exceed the given size.
     def fits_inside?(other)
       width <= other.width && height <= other.height
     end
   end
 
+  # Take the given image and RIAPI parameters and compute a layout for
+  # rendering. Neither the image nor the parameters are modified.
+  #
+  # @param path [String] Relative path to the image file to resize.
+  # @param params [Hash<Symbol, Symbol>] Resizing parameters.
+  #
+  # @return [Hash<Symbol, Object>]
   def self.lay_out_image(path, params)
     image = Image.new path
     info = ImageInfo.new
@@ -33,7 +50,10 @@ module Layout
     process(info, params)
   end
 
-  # params are expected to conform to RIAPI
+  # Performs the computations for *lay_out_image*, given the input image information.
+  #
+  # @param info [ImageInfo] Image information
+  # @param params [Hash<Symbol, Symbol>] Resizing parameters.
   def self.process(info, params)
     if !params.include?(:width) && !params.include?(:height)
       # when neither width nor height are given, do nothing
@@ -131,7 +151,14 @@ module Layout
     end
   end
 
-  # find the largest factor of 2 by which the shrink ratio could be reduced
+  # Find the largest factor by which the shrink ratio could be reduced.
+  #
+  # From VIPS documentation:
+  #  Shrink by this integer factor during load. Allowed values are 1, 2, 4 and
+  #  8. Shrinking during read is very much faster than decompressing the whole
+  #  image and then shrinking. 
+  #
+  # @return [Fixnum]
   def self.compute_shrink_factor(wfactor, hfactor)
     raise ArgumentError, "non-positive wfactor: #{wfactor}" if wfactor <= 0
     raise ArgumentError, "non-positive hfactor: #{hfactor}" if hfactor <= 0
