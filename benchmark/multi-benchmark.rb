@@ -10,7 +10,7 @@ module MultiBenchmark
   def self.repeat(count) # :yield: report
     sync = STDOUT.sync
     STDOUT.sync = true
-    
+
     report = Report.new(count)
     yield report
 
