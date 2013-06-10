@@ -19,15 +19,20 @@ module Layout
 
     # Create the largest size that has the same proportions as the current one
     # and fits inside the size given.
+    # @param other [Size]
     # @return [Size]
     def scale_inside(other)
       wratio = other.width  / width
       hratio = other.height / height
-      ratio = [wratio, hratio].min
-      Size.new(width * ratio, height * ratio)
+      if wratio < hratio
+        Size.new(other.width, height * wratio)
+      else
+        Size.new(width * hratio, other.height)
+      end
     end
 
     # Check that current dimensions not exceed the given size.
+    # @param other [Size]
     def fits_inside?(other)
       width <= other.width && height <= other.height
     end
@@ -56,8 +61,7 @@ module Layout
   # @param params [Hash<Symbol, Symbol>] Resizing parameters.
   def self.process(info, params)
     if !params.include?(:width) && !params.include?(:height)
-      # when neither width nor height are given, do nothing
-      {}
+      {} # when neither width nor height are given, do nothing
     else
       params = params.dup
 
@@ -73,10 +77,10 @@ module Layout
 
       # initialize sizes
       wanted_size = Size.new(params[:width], params[:height]) # requested image size
-      source_size = Size.new(info.width, info.height)           # original image size
-      target_size = Size.new(-1, -1)                            # eventual image size
-      canvas_size = Size.new(-1, -1)                            # canvas size
-      crop_size   = source_size                                 # size of the cropped image
+      source_size = Size.new(info.width, info.height)         # original image size
+      target_size = Size.new(-1, -1)                          # eventual image size
+      canvas_size = Size.new(-1, -1)                          # canvas size
+      crop_size   = source_size                               # size of the cropped image
 
       # process mode
       case params[:mode]
@@ -158,15 +162,21 @@ module Layout
   #  8. Shrinking during read is very much faster than decompressing the whole
   #  image and then shrinking. 
   #
+  # factor > 0; factor < 1 shinks, factor > 1 enlarges
+  #
+  # @param wfactor [Float] width resize factor
+  # @param hfactor [Float] height resize factor
+  #
   # @return [Fixnum]
   def self.compute_shrink_factor(wfactor, hfactor)
     raise ArgumentError, "non-positive wfactor: #{wfactor}" if wfactor <= 0
     raise ArgumentError, "non-positive hfactor: #{hfactor}" if hfactor <= 0
 
-    f = 2
-    while wfactor * f <= 1 && hfactor * f <= 1
-      f *= 2
+    case
+    when wfactor > 0.5   || hfactor > 0.5   then 1
+    when wfactor > 0.25  || hfactor > 0.25  then 2
+    when wfactor > 0.125 || hfactor > 0.125 then 4
+    else 8
     end
-    f / 2
   end
 end
