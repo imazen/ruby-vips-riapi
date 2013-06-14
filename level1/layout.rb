@@ -172,10 +172,12 @@ module Layout
     raise ArgumentError, "non-positive wfactor: #{wfactor}" if wfactor <= 0
     raise ArgumentError, "non-positive hfactor: #{hfactor}" if hfactor <= 0
 
+    factor = [wfactor, hfactor].max
+
     case
-    when wfactor > 0.5   || hfactor > 0.5   then 1
-    when wfactor > 0.25  || hfactor > 0.25  then 2
-    when wfactor > 0.125 || hfactor > 0.125 then 4
+    when factor > 0.5   then 1
+    when factor > 0.25  then 2
+    when factor > 0.125 then 4
     else 8
     end
   end
